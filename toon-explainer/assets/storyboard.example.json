@@ -1,0 +1,40 @@
+{
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "duration": 9.0,
+  "lens": 35,
+  "sky": "sky",
+  "sun_dir": [-0.5, 0.4, -1.0],
+  "objects": [
+    {"id": "ground", "type": "plane", "size": [80, 80], "pos": [0, 0, -4.2], "color": "grass"},
+    {"id": "house", "type": "box", "size": [12, 9, 4], "pos": [0, 0, -2], "color": "wall"},
+    {"id": "roof", "type": "box", "size": [12.4, 9.4, 0.3], "pos": [0, 0, 0.15], "color": "concrete"},
+    {"id": "parapet", "type": "box", "size": [12.4, 0.3, 0.5], "pos": [0, 4.55, 0.55], "color": "concrete"},
+    {"id": "tank", "type": "cylinder", "radius": 0.7, "height": 1.3, "pos": [4.5, 3.0, 0.95], "color": "tank"},
+    {"id": "panels", "type": "panel_row", "count": 5, "pos": [-4.6, 1.0, 0.65], "tilt": 18, "gap": 0.08},
+    {"id": "inverter", "type": "device", "size": [0.7, 0.2, 1.0], "pos": [3.0, -4.6, -1.0], "rot": [0, 0, 0], "color": "white", "screen": "green"},
+    {"id": "cable", "type": "cable", "radius": 0.05, "period": 0.35,
+     "points": [[-4.6, 1.8, 0.4], [0.5, 1.8, 0.35], [3.0, 1.8, 0.35], [3.0, -4.0, 0.35], [3.0, -4.7, 0.1], [3.0, -4.7, -0.5]]},
+    {"id": "bulb", "type": "sphere", "radius": 0.25, "pos": [1.5, -2.5, 0.6], "color": "sun"}
+  ],
+  "shots": [
+    {"t0": 0.0, "t1": 4.5, "orbit": {"center": [-1.5, 0.5, 0.3], "radius": 16, "height": 9, "angle_from": -70, "angle_to": -50}},
+    {"t0": 4.5, "t1": 9.0, "from": {"pos": [6, -12, 4], "look": [2.5, -3, 0]}, "to": {"pos": [5, -9, 2.5], "look": [3, -4, -0.6]}}
+  ],
+  "actions": [
+    {"target": "panels", "anim": "drop_in", "t": 0.4, "dur": 0.5, "stagger": 0.15, "height": 3},
+    {"target": "cable", "anim": "pop_in", "t": 1.6, "dur": 0.3, "stagger": 0},
+    {"target": "cable", "anim": "flow", "t": 2.0, "speed": 3.0},
+    {"target": "inverter", "anim": "pop_in", "t": 4.6, "dur": 0.4, "stagger": 0},
+    {"target": "inverter", "anim": "pulse", "t": 5.5, "dur": 1.2, "strength": 2.5, "times": 2},
+    {"target": "bulb", "anim": "pop_in", "t": 6.5, "dur": 0.3, "stagger": 0},
+    {"target": "bulb", "anim": "glow", "t": 6.8, "dur": 0.3, "strength": 3.0}
+  ],
+  "captions": [
+    {"t0": 0.6, "t1": 2.2, "text": "panel row"},
+    {"t0": 2.3, "t1": 4.3, "text": "direct current"},
+    {"t0": 4.8, "t1": 6.4, "text": "inverter"},
+    {"t0": 6.6, "t1": 8.8, "text": "alternating current"}
+  ]
+}

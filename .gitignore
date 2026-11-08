@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.atl/
+out/
+*.mp4
+*.blend
+*.blend1
+*.wav
+.DS_Store
