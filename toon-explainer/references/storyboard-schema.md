@@ -93,11 +93,55 @@ soft vignette after the captions. Font default: `assets/fonts/ArchivoBlack-Regul
 with white outline, auto-wrapped at `caption_max_chars`. Keep 1–4 words, one idea,
 aligned to the narration phrase. Use `\n` to force a break.
 
+## audio (optional)
+
+```json
+"audio": {
+  "narration": {"file": "narration.wav", "gain_db": 0},
+  "music": {"file": "track.mp3", "gain_db": -16, "duck_db": -10, "fade_in": 0.3, "fade_out": 1.0},
+  "sfx": [
+    {"file": "sfx/pop.wav", "at": "action:panels/drop_in", "each": true, "gain_db": -4},
+    {"file": "sfx/whoosh.wav", "at": "action:3", "offset": -0.05},
+    {"file": "sfx/ding.wav", "at": 6.8, "gain_db": -8}
+  ]
+}
+```
+
+- Paths are relative to the storyboard directory. Any relative sfx path that does not
+  exist there falls back to `assets/sfx/<basename>` in the skill.
+- `at`: seconds, `"action:<index>"`, or `"action:<target>/<anim>"` (first matching
+  action; `<anim>` optional). Resolves to that action's `t`; `offset` is added after.
+- `each: true` on a group action (`panel_row`, `empty` with children) with `stagger` > 0
+  places one cue per child at `t + i * stagger`. Count = `panel_row.count` or the number
+  of objects whose `parent` is the target.
+- `music`: trimmed/padded to `duration`, faded in/out. `duck_db` is the target attenuation
+  under speech: the gain ramps toward it with a 20 ms attack while narration is above
+  -45 dBFS (10 ms blocks) and recovers with a 400 ms release. Very quiet speech does not
+  duck. Omit `duck_db` for no ducking.
+- Every action may carry `"snap": false` to keep its `t` when `beats.py snap` runs.
+
+Pipeline: `mix.py storyboard.json out/mix.wav` then `captions.py ... --audio out/mix.wav`.
+`captions.py --audio narration.wav` still works for storyboards without `audio`.
+
+### beats.py
+
+```
+python3 ~/.claude/skills/toon-explainer/assets/beats.py detect track.mp3 [--bpm-min 70 --bpm-max 180] [--json beats.json]
+python3 ~/.claude/skills/toon-explainer/assets/beats.py snap storyboard.json --music track.mp3 [--tolerance 0.25] [--captions] [--write]
+```
+
+`detect` prints BPM and beat times (numpy spectral flux + autocorrelation, no librosa).
+Measured on synthetic click tracks: BPM within 0.2, beat phase within 30 ms.
+`snap` moves each action `t` (and caption `t0`/`t1` with `--captions`) to the nearest beat
+when the move is <= tolerance; prints before/after; `--write` saves in place. Run it
+BEFORE the stills pass, then re-check framing, because actions shift up to `tolerance`.
+
 ## commands
 
 ```
 ~/.local/bin/blender -b -P ~/.claude/skills/toon-explainer/assets/build.py -- storyboard.json out [--preview] [--stills 1,3,5] [--blend]
-python3 ~/.claude/skills/toon-explainer/assets/captions.py storyboard.json out/raw.mp4 out/final.mp4 [--audio narration.wav] [--font file.ttf]
+python3 ~/.claude/skills/toon-explainer/assets/mix.py storyboard.json out/mix.wav [--duration S]
+python3 ~/.claude/skills/toon-explainer/assets/captions.py storyboard.json out/raw.mp4 out/final.mp4 [--audio out/mix.wav] [--font file.ttf]
 ```
 
 Render cost on this machine (RTX 5060 Ti): preview 9 s clip ≈ 13 s; 1080x1920

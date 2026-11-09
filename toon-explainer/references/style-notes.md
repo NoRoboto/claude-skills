@@ -46,3 +46,15 @@ pans over a fixed scene. AI, if any, was used for script / voice only.
 4. Cool shadow tint, Archivo Black captions with white border + soft drop shadow, grain 5, vignette.
 Still missing vs the reference: pencil hatching on the sky, soft contact shadows under objects,
 hand-tuned asset detail (rails, bolts, windows). Use `model` with CC0 .glb packs for those.
+
+## Sound design for this look
+
+- One SFX per visual event, never two cues on the same frame. Silence between events is fine.
+- `pop` on `pop_in` / `drop_in` (use `each: true` so a staggered row ticks like a counter),
+  `whoosh` on `slide_in`, `draw` and camera cuts, `ding` on `glow` / "it works" pulses,
+  `thud` (low) when a transformer or other big object lands (`offset` ~ +0.45 = end of the drop).
+- Levels that sit right under narration: SFX -4 to -8 dB, music -16 dB, `duck_db` -10.
+  Keep the mix max under -3 dBFS; `mix.py` limits at -0.45 dBFS as a safety net only.
+- With music, run `beats.py snap` first so pops land on beats; keep `snap: false` on
+  actions tied to narration words (hide/show at a caption boundary).
+- Placeholders in `assets/sfx/` are synthetic. Replace with CC0 recordings before publishing.
